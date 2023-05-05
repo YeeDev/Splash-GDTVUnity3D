@@ -3,11 +3,12 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class Mover : MonoBehaviour
 {
-    [Range(0, 10)][SerializeField] float forwardSpeed = 5;
-    [Range(0, 10)][SerializeField] float backWalkFactor = 2;
-    [Range(0, 10)][SerializeField] float turnSpeedPenalty = 0.1f;
-    [Range(0, 10)][SerializeField] float turnSpeed = 5;
-    [Range(0, 10)][SerializeField] float jumpForce = 10;
+    [Range(0, 10)] [SerializeField] float forwardSpeed = 5;
+    [Range(0, 10)] [SerializeField] float backWalkFactor = 2;
+    [Range(0, 10)] [SerializeField] float turnSpeedPenalty = 0.1f;
+    [Range(0, 10)] [SerializeField] float turnSpeed = 5;
+    [Range(0, 10)] [SerializeField] float jumpForce = 10;
+    [Range(0, 10)] [SerializeField] float minJumpForce = 1;
 
     Rigidbody rb;
 
@@ -17,7 +18,7 @@ public class Mover : MonoBehaviour
     public void Jump(float vAxis, float hAxis)
     {
         Vector3 jumpSpeed = rb.velocity;
-        jumpSpeed.y = jumpForce * (CalculateWalkSpeed(vAxis, hAxis) / forwardSpeed);
+        jumpSpeed.y = Mathf.Clamp(jumpForce * (CalculateWalkSpeed(vAxis, hAxis) / forwardSpeed), minJumpForce, jumpForce);
         rb.velocity = jumpSpeed;
     }
 
