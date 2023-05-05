@@ -7,6 +7,7 @@ public class Mover : MonoBehaviour
     [SerializeField] float backWalkFactor = 2;
     [SerializeField] float turnSpeed = 5;
     [SerializeField] float jumpForce = 10;
+    [SerializeField] float turnSpeedPenalty = 0.1f;
     [SerializeField] Transform groundChecker;
     [SerializeField] LayerMask groundMask;
     [SerializeField] float checkerRadius;
@@ -35,6 +36,7 @@ public class Mover : MonoBehaviour
     {
         float walkSpeed = Input.GetAxis("Vertical");
         walkSpeed *= walkSpeed < 0 ? backWalkFactor : forwardSpeed;
+        walkSpeed = Mathf.Clamp(walkSpeed - Mathf.Abs(Input.GetAxis("Horizontal")) * turnSpeedPenalty, 0 , walkSpeed);
         Vector3 translation = transform.forward * walkSpeed;
         rb.MovePosition(transform.position + translation * Time.fixedDeltaTime);
 
@@ -43,12 +45,4 @@ public class Mover : MonoBehaviour
             transform.Rotate(transform.up * turnSpeed * Input.GetAxisRaw("Horizontal"));
         }
     }
-
-#if UNITY_EDITOR
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.magenta;
-        Gizmos.DrawWireSphere(groundChecker.position, checkerRadius);    
-    }
-#endif
 }
