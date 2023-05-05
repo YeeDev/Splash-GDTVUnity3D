@@ -7,12 +7,23 @@ public class Mover : MonoBehaviour
 {
     [SerializeField] float speed = 5;
     [SerializeField] float turnSpeed = 5;
+    [SerializeField] float jumpForce = 10;
 
     Rigidbody rb;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+    }
+
+    private void Update()
+    {
+        if (Input.GetButtonDown("Jump"))
+        {
+            Vector3 jumpSpeed = rb.velocity;
+            jumpSpeed.y = jumpForce;
+            rb.velocity = jumpSpeed;
+        }
     }
 
     void FixedUpdate()
