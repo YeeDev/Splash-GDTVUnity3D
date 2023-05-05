@@ -5,7 +5,8 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class Mover : MonoBehaviour
 {
-    [SerializeField] float speed = 5;
+    [SerializeField] float forwardSpeed = 5;
+    [SerializeField] float backWalkFactor = 2;
     [SerializeField] float turnSpeed = 5;
     [SerializeField] float jumpForce = 10;
 
@@ -21,15 +22,19 @@ public class Mover : MonoBehaviour
         if (Input.GetButtonDown("Jump"))
         {
             Vector3 jumpSpeed = rb.velocity;
-            jumpSpeed.y = jumpForce;
+            jumpSpeed.y = jumpForce * Input.GetAxis("Vertical");
             rb.velocity = jumpSpeed;
         }
     }
 
     void FixedUpdate()
     {
-        Vector3 translation = transform.forward * Input.GetAxis("Vertical") * speed;
+        float walkSpeed = Input.GetAxis("Vertical");
+        walkSpeed *= walkSpeed < 0 ? backWalkFactor : forwardSpeed;
+        Vector3 translation = transform.forward * walkSpeed;
         rb.MovePosition(transform.position + translation * Time.fixedDeltaTime);
+
+        Debug.Log(Input.GetAxis("Vertical"));
 
         if (Input.GetButton("Horizontal"))
         {
