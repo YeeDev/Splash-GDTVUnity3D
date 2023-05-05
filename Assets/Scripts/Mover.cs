@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -9,21 +7,27 @@ public class Mover : MonoBehaviour
     [SerializeField] float backWalkFactor = 2;
     [SerializeField] float turnSpeed = 5;
     [SerializeField] float jumpForce = 10;
+    [SerializeField] Transform groundChecker;
+    [SerializeField] LayerMask groundMask;
+    [SerializeField] float checkerRadius;
 
     Rigidbody rb;
 
-    private void Awake()
-    {
-        rb = GetComponent<Rigidbody>();
-    }
+    private void Awake() => rb = GetComponent<Rigidbody>();
 
     private void Update()
     {
-        if (Input.GetButtonDown("Jump"))
+        if (Input.GetButtonDown("Jump") && Physics.CheckSphere(groundChecker.position, checkerRadius, groundMask))
         {
             Vector3 jumpSpeed = rb.velocity;
             jumpSpeed.y = jumpForce * Input.GetAxis("Vertical");
             rb.velocity = jumpSpeed;
+        }
+        else if (Input.GetButtonUp("Jump") && rb.velocity.y > 0)
+        {
+            Vector3 haltSpeed = rb.velocity;
+            haltSpeed.y *= 0.5f;
+            rb.velocity = haltSpeed;
         }
     }
 
@@ -34,11 +38,17 @@ public class Mover : MonoBehaviour
         Vector3 translation = transform.forward * walkSpeed;
         rb.MovePosition(transform.position + translation * Time.fixedDeltaTime);
 
-        Debug.Log(Input.GetAxis("Vertical"));
-
         if (Input.GetButton("Horizontal"))
         {
             transform.Rotate(transform.up * turnSpeed * Input.GetAxisRaw("Horizontal"));
         }
     }
+
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.magenta;
+        Gizmos.DrawWireSphere(groundChecker.position, checkerRadius);    
+    }
+#endif
 }
