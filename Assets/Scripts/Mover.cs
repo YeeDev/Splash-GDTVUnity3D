@@ -52,7 +52,6 @@ public class Mover : MonoBehaviour
             walkSpeed = Mathf.Clamp(walkSpeed - Mathf.Abs(hAxis) * turnSpeedPenalty, 0, walkSpeed);
         }
 
-        Debug.Log(walkSpeed);
         return walkSpeed;
     }
 }
